@@ -10,7 +10,7 @@ enum Message {
     Quit,
     Move {x:i32, y:i32},
     Echo (String),
-    ChangeColor(i32, i32, i32)
+    ChangeColor(u8, u8, u8)
 }
 
 impl Message {
