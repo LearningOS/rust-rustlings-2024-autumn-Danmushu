@@ -2,7 +2,6 @@
 	double linked list reverse
 	This problem requires you to reverse a doubly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -74,6 +73,50 @@ impl<T> LinkedList<T> {
     }
 	pub fn reverse(&mut self){
 		// TODO
+        //if self.length == 0 || self.length == 1 { return }
+
+        //let mut cur = self.start.unwrap().as_ptr();
+
+        //while cur != self.start.unwrap().as_ptr() {
+            //unsafe {
+                //let next = (*cur).prev;
+                //(*cur).prev = (*cur).next;
+                //(*cur).next = next;
+                //cur = (*cur).next.unwrap().as_ptr();
+            //}
+        //} 
+        //unsafe {
+            //let next = (*cur).next;
+            //(*cur).prev = (*cur).next;
+            //(*cur).next = next;
+            //let tmp = self.start;
+            //self.start = self.end;
+            //self.end = tmp;
+        //} 
+        if self.length == 0 || self.length == 1 {return;}
+
+        let mut current = self.start;
+        let mut temp = None;
+
+        // 遍历整个链表并交换 next 和 prev 指针
+        while let Some(mut node) = current {
+            unsafe {
+                // 获取当前节点的指针
+                let node_ptr = node.as_ptr();
+            
+                // 交换 prev 和 next
+                temp = (*node_ptr).prev;
+                (*node_ptr).prev = (*node_ptr).next;
+                (*node_ptr).next = temp;
+            }
+            // 向前移动到原来的 next（现在是 prev）
+            current = unsafe { node.as_ref().prev };
+        }
+
+        // 交换 start 和 end
+        let tmp = self.start;
+        self.start = self.end;
+        self.end = tmp;
 	}
 }
 

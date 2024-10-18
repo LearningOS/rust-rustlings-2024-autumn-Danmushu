@@ -2,11 +2,10 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
-use std::vec::*;
+//use std::{clone, vec::*};
 
 #[derive(Debug)]
 struct Node<T> {
@@ -29,13 +28,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: Ord + Clone> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T: Ord + Clone> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -72,11 +71,50 @@ impl<T> LinkedList<T> {
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
 	{
 		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+        let mut merged_list = LinkedList::new();
+
+        // 当前节点指针
+        let mut a_ptr = list_a.start;
+        let mut b_ptr = list_b.start;
+
+        // 合并过程，比较a和b链表的当前节点
+        while let (Some(a_node), Some(b_node)) = (a_ptr, b_ptr) {
+            unsafe {
+                let a_val = (*a_node.as_ptr()).val.clone();
+                let b_val = (*b_node.as_ptr()).val.clone();
+
+                // 比较a和b链表节点的值
+                if a_val <= b_val {
+                    merged_list.add(a_val.clone());
+                    a_ptr = (*a_node.as_ptr()).next; // 移动a链表指针
+                } else {
+                    merged_list.add(b_val.clone());
+                    b_ptr = (*b_node.as_ptr()).next; // 移动b链表指针
+                }
+            }
         }
+
+        // 将剩余未遍历完的链表部分添加到新链表
+        while let Some(a_node) = a_ptr {
+            unsafe {
+                merged_list.add((*a_node.as_ptr()).val.clone());
+                a_ptr = (*a_node.as_ptr()).next;
+            }
+        }
+
+        while let Some(b_node) = b_ptr {
+            unsafe {
+                merged_list.add((*b_node.as_ptr()).val.clone());
+                b_ptr = (*b_node.as_ptr()).next;
+            }
+        }
+
+        merged_list
+		//Self {
+            //length: 0,
+            //start: None,
+            //end: None,
+        //}
 	}
 }
 
